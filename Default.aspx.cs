@@ -23,26 +23,58 @@ namespace SimpleCRUD
             {
                 try
                 {
-                    List<string> list = new List<string>();
+                    List<Dept> ddlDeptlist = new List<Dept>();
+                    List<Team> ddlTeamlist = new List<Team>();
+                    List<Person> ddlPersonlist = new List<Person>();
+
                     string constring = ConfigurationManager.ConnectionStrings["Test"].ConnectionString;
-                    string query = "select Name from Person ";
+                    string dept_query = "Select ID, Name from Department ";
+                    string team_query = "Select ID, Name from Team ";
+                    string person_query = "Select ID, Name from Person ";
 
                     using (SqlConnection con = new SqlConnection(constring))
                     {
                         con.Open();
-
                         SqlCommand cmd = con.CreateCommand();
-                        cmd.CommandText = query;
+                        cmd.CommandText = dept_query;
                         cmd.CommandType = System.Data.CommandType.Text;
 
                         using (SqlDataReader reader = cmd.ExecuteReader())
                         {
                             while (reader.Read())
                             {
-                                Model temp = new Model();
+                                Dept temp = new Dept();
+                                temp.ID = Convert.ToInt32(reader["ID"]);
                                 temp.Name = reader["Name"].ToString();
-                                list.Add(temp.Name);
-                                
+                                ddlDeptlist.Add(temp);
+                            }
+                        }
+
+                        cmd.CommandText = team_query;
+                        cmd.CommandType = System.Data.CommandType.Text;
+
+                        using (SqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                Team temp = new Team();
+                                temp.ID = Convert.ToInt32(reader["ID"]);
+                                temp.Name = reader["Name"].ToString();
+                                ddlTeamlist.Add(temp);
+                            }
+                        }
+
+                        cmd.CommandText = person_query;
+                        cmd.CommandType = System.Data.CommandType.Text;
+
+                        using (SqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                Person temp = new Person();
+                                temp.ID = Convert.ToInt32(reader["ID"]);
+                                temp.Name = reader["Name"].ToString();
+                                ddlPersonlist.Add(temp);
                             }
                         }
 
@@ -50,8 +82,15 @@ namespace SimpleCRUD
 
                         //
                     }
-                ddl.DataSource = list;
-                ddl.DataBind();
+
+                ddlDept.DataSource = ddlDeptlist;
+                    //ddl.DataTextField = "Name";
+                    //ddl.DataValueField = "Name";
+                    // only use this pag may model gawin mong models or object list yung list
+                ddlDept.DataBind();
+                ddlTeam.DataSource = ddlTeamlist;
+                ddlTeam.DataBind();
+             
                 }
                 catch (Exception ex)
                 {
@@ -60,19 +99,37 @@ namespace SimpleCRUD
                 
             }
         }
-        protected void btnAddPerson_Click(object sender, EventArgs e)
+        protected void btnDept_Click(object sender, EventArgs e)
         {
-            Model person = new Model();
-            person.Name = txtName.Text;
-            person.Age = Convert.ToInt32(txtAge.Text);
+            Dept dept = new Dept();
+            dept.Name = txtDeptName.Text;
+
 
             DefaultController defaultController = new DefaultController();
-            defaultController.PersonTable(person);
-            //display();
-            BindGrid();
-            UpdatePanel2.Update();
-                  
+            defaultController.AddDeptTable(dept);  
+
         }
+
+        protected void btnTeam_Click(object sender, EventArgs e)
+        {
+            Team team = new Team();
+            team.Name = txtTeamName.Text;
+
+
+            DefaultController defaultController = new DefaultController();
+            defaultController.AddTeamTable(team);
+
+        }
+        protected void btnPerson_Click(object sender, EventArgs e)
+        {
+            Person person = new Person();
+            person.Name = txtPersonName.Text;
+            
+
+            DefaultController defaultController = new DefaultController();
+            defaultController.AddPersonTable(person);    
+        }
+        
         public void display()
         {
             //string constring = ConfigurationManager.ConnectionStrings["Test"].ConnectionString;
@@ -146,10 +203,10 @@ namespace SimpleCRUD
                     {
                         while (reader.Read())
                         {
-                            Model temp = new Model();
+                            Person temp = new Person();
                             
                             temp.Name = reader["Name"].ToString();
-                            temp.Age = Convert.ToInt32(reader["Age"]);
+                      
 
                             list.Add(temp.Name);
                             

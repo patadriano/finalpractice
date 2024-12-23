@@ -12,12 +12,12 @@ namespace SimpleCRUD.Controllers
 {
     public class DefaultController
     {
-        public void PersonTable(Model person)
+        public void AddPersonTable(Person person)
         {
             try
             {
                 string constring = ConfigurationManager.ConnectionStrings["Test"].ConnectionString;
-                string query = $"insert into Person (Name, Age) values (@Name, @Age)";
+                string query = $"insert into Person (Name) values (@Name)";
 
                 using (SqlConnection con = new SqlConnection(constring))
                 {
@@ -28,7 +28,7 @@ namespace SimpleCRUD.Controllers
                     cmd.CommandType = System.Data.CommandType.Text;
 
                     cmd.Parameters.AddWithValue("@Name", person.Name);
-                    cmd.Parameters.AddWithValue("@Age", person.Age);
+                    
 
                     cmd.ExecuteNonQuery();
 
@@ -50,7 +50,90 @@ namespace SimpleCRUD.Controllers
             }
 
         }
-        public void ReadPersonTable(Model person)
+
+        public void AddTeamTable(Team team)
+        {
+            try
+            {
+                string constring = ConfigurationManager.ConnectionStrings["Test"].ConnectionString;
+                string query = $"insert into Team (Name, DeptID) values (@Name, @DeptID)";
+
+                
+
+                using (SqlConnection con = new SqlConnection(constring))
+                {
+                    con.Open();
+
+                    SqlCommand cmd = con.CreateCommand();
+                    cmd.CommandText = query;
+                    cmd.CommandType = System.Data.CommandType.Text;
+
+                    cmd.Parameters.AddWithValue("@Name", team.Name);
+
+                    //cmd.Parameters.AddWithValue("@DeptID", team.DeptID);
+
+                    cmd.ExecuteNonQuery();
+
+                    //using (SqlDataReader reader = cmd.ExecuteReader())
+                    //{
+                    //    while (reader.Read())
+                    //    {
+                    //        Model temp = new Model();
+                    //        temp.Name = reader["Name"].ToString();
+                    //        temp.Age = (int)reader["Age"];
+
+                    //        ldata.Add(temp);
+                    //    }
+                    //}
+                }
+            }
+            catch (Exception ex)
+            {
+            }
+
+        }
+
+        public void AddDeptTable(Dept dept)
+        {
+            try
+            {
+                string constring = ConfigurationManager.ConnectionStrings["Test"].ConnectionString;
+                string query = $"insert into Department (Name) values (@Name)";
+
+                using (SqlConnection con = new SqlConnection(constring))
+                {
+                    con.Open();
+
+                    SqlCommand cmd = con.CreateCommand();
+                    cmd.CommandText = query;
+                    cmd.CommandType = System.Data.CommandType.Text;
+
+                    cmd.Parameters.AddWithValue("@Name", dept.Name);
+
+                  
+
+                    cmd.ExecuteNonQuery();
+
+                    //using (SqlDataReader reader = cmd.ExecuteReader())
+                    //{
+                    //    while (reader.Read())
+                    //    {
+                    //        Model temp = new Model();
+                    //        temp.Name = reader["Name"].ToString();
+                    //        temp.Age = (int)reader["Age"];
+
+                    //        ldata.Add(temp);
+                    //    }
+                    //}
+                }
+            }
+            catch (Exception ex)
+            {
+            }
+
+        }
+
+        public void ReadPersonTable(Person person)
         {
             try
             {
@@ -69,9 +152,9 @@ namespace SimpleCRUD.Controllers
                     {
                         while (reader.Read())
                         {
-                            Model temp = new Model();
+                            Person temp = new Person();
                             temp.Name = reader["Name"].ToString();
-                            temp.Age = (int)reader["Age"];
+                         
                         }
                     }
 

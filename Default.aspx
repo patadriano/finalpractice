@@ -10,21 +10,47 @@
         </section>
 
         <div class="row">
-            <asp:UpdatePanel runat="server" ID="UpdatePanel2"  UpdateMode="Conditional" ChildrenAsTriggers="true" >
+
+            <asp:UpdatePanel runat="server" ID="UpdatePanel1"  UpdateMode="Conditional" ChildrenAsTriggers="true" >
                 <ContentTemplate>
                     <br>
-                    <asp:Label ID="Name" Text="Name" runat="server" />
-                    <asp:TextBox runat="server" ID="txtName" />
-                     <br>
-                    <asp:Label ID="Age" Text="Age" runat="server" />
-                    <asp:TextBox runat="server" ID="txtAge" />
+                    <asp:Label ID="DeptName" Text="Department Name" runat="server" />
                     <br>
-                    <asp:Button ID="AddPerson" Text="Add" runat="server" OnClick="btnAddPerson_Click" />
-                    <%--<asp:Button ID="EditPerson" Text="Edit" runat="server" OnClick="btnEditPerson_Click" />
-                    <asp:Button ID="DeletePerson" Text="Delete" runat="server" OnClick="btnDeletePerson_Click" />--%>
+                    <asp:TextBox runat="server" ID="txtDeptName" />
+                     <br>
+                    <asp:Button ID="AddDept" Text="Add Dept" runat="server" OnClick="btnDept_Click" />
+       
                 </ContentTemplate>
             </asp:UpdatePanel>
-            <asp:UpdatePanel runat="server" ID="UpdatePanel1"  UpdateMode="Conditional" ChildrenAsTriggers="true" >
+
+             <asp:UpdatePanel runat="server" ID="UpdatePanel2"  UpdateMode="Conditional" ChildrenAsTriggers="true" >
+                 <ContentTemplate>
+                     <asp:DropDownList runat="server" ID="ddlDept"></asp:DropDownList>
+                     <br>
+                     <asp:Label ID="TeamName" Text="Team Name" runat="server" />
+                     <br>
+                     <asp:TextBox runat="server" ID="txtTeamName" />
+                      <br>
+                     <asp:Button ID="AddTeam" Text="Add Team" runat="server" OnClick="btnTeam_Click" />
+                    
+                 </ContentTemplate>
+             </asp:UpdatePanel>
+
+            <asp:UpdatePanel runat="server" ID="UpdatePanel3"  UpdateMode="Conditional" ChildrenAsTriggers="true" >
+                <ContentTemplate>
+                    <asp:DropDownList runat="server" ID="ddlTeam"></asp:DropDownList>
+                    <br>
+                    <asp:Label ID="PersonName" Text="Person Name" runat="server" />
+                    <br>
+                    <asp:TextBox runat="server" ID="txtPersonName" />
+                     <br>
+                    <asp:Button ID="AddPerson" Text="Add Person" runat="server" OnClick="btnPerson_Click" />
+                  
+                </ContentTemplate>
+            </asp:UpdatePanel>
+
+
+            <asp:UpdatePanel runat="server" ID="UpdatePanel4"  UpdateMode="Conditional" ChildrenAsTriggers="true" >
                  <ContentTemplate>
                      <asp:GridView ID="GridView1" runat="server" AutoGenerateColumns="False" AllowPaging="true" OnPageIndexChanging="OnPageIndexChanging" PageSize="10">
                          <Columns>
@@ -35,9 +61,7 @@
                  </ContentTemplate>
                 </asp:UpdatePanel>
              <asp:Button ID="ReaderButton" Text="Read" runat="server" OnClick="btnReader" />
-            
-            <asp:DropDownList runat="server" ID="ddl"></asp:DropDownList>
-            
+
         </div>
     </main>
 
