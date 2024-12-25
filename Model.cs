@@ -5,24 +5,16 @@ using System.Web;
 
 namespace SimpleCRUD
 {
-    public class Dept
-    {
-        public int ID { get; set; }
-        public string Name { get; set; }
-    }
-    public class Team
-    {
-        public int ID { get; set; }
-        public string Name { get; set; }
-
-        public Dept DeptID { get; set; }    
-
-    }
     public class Person
     {
+        public string Name { get; set; }
+        public int Age { get; set; }
+        public Group group { get; set; }
+    }
+    public class Group 
+    {
         public int ID { get; set; }
         public string Name { get; set; }
-
-        public Team TeamID { get; set; }
+       
     }
 }
