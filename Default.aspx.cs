@@ -1,66 +1,56 @@
-﻿using SimpleCRUD.Controller;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Data;
+using System.Configuration;
 using System.Data.SqlClient;
+using System.Data;
 using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using System.Xml.Linq;
+using RealCrud.Controller;
 
-
-namespace SimpleCRUD
+namespace RealCrud
 {
     public partial class _Default : Page
     {
-        protected void updateddl()
-        {
-            List<Group> ddlGroupList = new List<Group>();
-                            String constring = "Data Source =.\\sqlexpress; Initial Catalog = Practice; Integrated Security = True; Encrypt = False";
-                            string query = "select * from [Group]";
-                            using (SqlConnection con = new SqlConnection(constring))
-                            {
-                                con.Open();
-                                using (SqlCommand cmd = new SqlCommand(query,con))
-                                {
-                                    using (SqlDataReader reader = cmd.ExecuteReader())
-                                    {
-                                        while (reader.Read())
-                                        {
-                                            Group temp = new Group();
-                                            temp.ID = Convert.ToInt32(reader["ID"]);
-                                            temp.Name = reader["Name"].ToString();
-                                            ddlGroupList.Add(temp);
-                                        }
-                                    }
-                                }  
-                            }
-                            ddlGroup.DataSource = ddlGroupList;
-                            ddlGroup.DataTextField = "Name";
-                            ddlGroup.DataValueField = "ID";
-                            ddlGroup.DataBind();
-        }
-
         protected void Page_Load(object sender, EventArgs e)
         {
+
             if (!IsPostBack)
             {
-                updateddl();
+                BindGrid();
+                
             }
+
+
         }
-        protected void Button1_Click(object sender, EventArgs e)
-        {
-            int selectedIndex = ddlGroup.SelectedIndex;
-            Person person = new Person();
-            person.Name = TextBox1.Text;
+        //protected void EditButton_Click(object sender, EventArgs e)
+        //{
+        //    Button btn = (Button)sender;
+        //    GridViewRow row = (GridViewRow)btn.NamingContainer;
+        //    int rowIndex = row.RowIndex;
+        //    // Use rowIndex to identify the clicked row and proceed with logic
+        //    Edit(rowIndex);
+
+        //}
+        //protected void DeleteButton_Click(object sender, EventArgs e)
+        //{
+        //    Button btn = (Button)sender;
+        //    GridViewRow row = (GridViewRow)btn.NamingContainer;
+        //    int rowIndex = row.RowIndex;
+        //    // Use rowIndex to identify the clicked row and proceed with logic
+        //    Delete(rowIndex);
+        //}
+
+        //private void Edit(int rowIndex){
+
             
-
-            //DefaultController defaultController = new DefaultController();
-            //defaultController.PersonTable(person);
-
+        //}
+        private void Delete(int rowIndex)
+        {
             String constring = "Data Source =.\\sqlexpress; Initial Catalog = Practice; Integrated Security = True; Encrypt = False";
-            String query = $"insert into Person (Name, GroupID) values ('{person.Name}',{selectedIndex+1})";
+            string query = $"DELETE FROM Person WHERE ID = {rowIndex+1}";
+
             using (SqlConnection con = new SqlConnection(constring))
             {
                 con.Open();
@@ -69,27 +59,84 @@ namespace SimpleCRUD
                 cmd.CommandType = System.Data.CommandType.Text;
                 cmd.ExecuteNonQuery();
             }
-            
-        }
-        protected void Button2_Click(object sender, EventArgs e)
-        {
-            Group grp = new Group();
-            grp.Name = TextBox3.Text;
-            //DefaultController defaultController = new DefaultController();
-            //defaultController.PersonTable(person);
-            String constring = "Data Source =.\\sqlexpress; Initial Catalog = Practice; Integrated Security = True; Encrypt = False";
-            string query = $"INSERT INTO [Group] (Name) VALUES ('{grp.Name}')";
 
+        }
+        protected void GridView1_RowEditing(object sender, GridViewEditEventArgs e)
+        {
+            // Set the row to edit mode
+            GridView1.EditIndex = e.NewEditIndex;
+            BindGrid(); // Rebind the GridView data
+        }
+
+        protected void GridView1_RowUpdating(object sender, GridViewUpdateEventArgs e)
+        {
+            // Get the row that is being edited
+            GridViewRow row = GridView1.Rows[e.RowIndex];
+
+            // Find the TextBox control inside the row
+            TextBox txtName = (TextBox)row.FindControl("TextBox1");
+
+            // Check if the TextBox was found
+            
+                // Get the updated name from the TextBox
+                string updatedName = txtName.Text;
+
+                // Get the ID from the DataKey (make sure DataKeyNames is set in your GridView)
+                int id = Convert.ToInt32(GridView1.DataKeys[e.RowIndex].Value);
+
+                // Proceed with your update logic
+                string constring = "Data Source =.\\sqlexpress; Initial Catalog = Practice; Integrated Security = True; Encrypt = False";
+                string query = "UPDATE Person SET Name = @Name WHERE ID = @ID";
+
+                using (SqlConnection con = new SqlConnection(constring))
+                {
+                    con.Open();
+                    SqlCommand cmd = new SqlCommand(query, con);
+                    cmd.Parameters.AddWithValue("@Name", updatedName);
+                    cmd.Parameters.AddWithValue("@ID", id);
+                    cmd.ExecuteNonQuery();
+                }
+
+                // Reset edit mode
+                GridView1.EditIndex = -1;
+                BindGrid(); // Rebind the GridView to refresh data
+            
+          
+        }
+
+
+
+        protected void GridView1_RowCancelingEdit(object sender, GridViewCancelEditEventArgs e)
+        {
+            // Cancel edit mode
+            GridView1.EditIndex = -1;
+            BindGrid(); // Rebind the GridView data
+        }
+
+
+
+        private void BindGrid()
+        {
+            String constring = "Data Source =.\\sqlexpress; Initial Catalog = Practice; Integrated Security = True; Encrypt = False";
             using (SqlConnection con = new SqlConnection(constring))
             {
-                con.Open();
-                SqlCommand cmd = con.CreateCommand();
-                cmd.CommandText = query;
-                cmd.CommandType = System.Data.CommandType.Text;
-                cmd.ExecuteNonQuery();
+                using (SqlCommand cmd = new SqlCommand("SELECT Id, Name FROM Person"))
+                {
+                    using (SqlDataAdapter sda = new SqlDataAdapter())
+                    {
+                        cmd.Connection = con;
+                        sda.SelectCommand = cmd;
+                        using (DataTable dt = new DataTable())
+                        {
+                            sda.Fill(dt);
+                            GridView1.DataSource = dt;
+                            GridView1.DataBind();
+                        }
+                    }
+                }
+
             }
-            updateddl();
-            UpdatePanel2.Update();
         }
+
     }
 }
