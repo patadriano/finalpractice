@@ -1,23 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Configuration;
-using System.Data.SqlClient;
 using System.Linq;
 using System.Web;
-using System.Web.UI.WebControls.WebParts;
+using System.Data.SqlClient;
+using System.Configuration;
+using System.Web.UI.WebControls;
 
-
-
-namespace SimpleCRUD.Controllers
+namespace PatExam.Controllers
 {
     public class DefaultController
     {
-        public void AddPersonTable(Person person)
+        public void Basic(Employee emp)
         {
             try
             {
+
+
                 string constring = ConfigurationManager.ConnectionStrings["Test"].ConnectionString;
-                string query = $"insert into Person (Name) values (@Name)";
+                // string query = "SELECT * FROM Employee ";
+                string query = $"insert into Employee (Name, Address) values ('{emp.Name}','{emp.Address}')";
+
 
                 using (SqlConnection con = new SqlConnection(constring))
                 {
@@ -27,18 +29,21 @@ namespace SimpleCRUD.Controllers
                     cmd.CommandText = query;
                     cmd.CommandType = System.Data.CommandType.Text;
 
-                    cmd.Parameters.AddWithValue("@Name", person.Name);
-                    
+                    //cmd.ExecuteNonQuery(); for insert
+
 
                     cmd.ExecuteNonQuery();
+
+
+
 
                     //using (SqlDataReader reader = cmd.ExecuteReader())
                     //{
                     //    while (reader.Read())
                     //    {
-                    //        Model temp = new Model();
+                    //        Employee temp = new Employee();
                     //        temp.Name = reader["Name"].ToString();
-                    //        temp.Age = (int)reader["Age"];
+                    //        temp.Address = reader["Address"].ToString();
 
                     //        ldata.Add(temp);
                     //    }
@@ -48,126 +53,63 @@ namespace SimpleCRUD.Controllers
             catch (Exception ex)
             {
             }
-
         }
 
-        public void AddTeamTable(Team team)
+        public void Team(Team team, string deptname)
         {
-            try
-            {
-                string constring = ConfigurationManager.ConnectionStrings["Test"].ConnectionString;
-                string query = $"insert into Team (Name, DeptID) values (@Name, @DeptID)";
 
+            string constring = ConfigurationManager.ConnectionStrings["Test"].ConnectionString;
+
+            //
+            string query =  $"Select ID from Person where deptname = '{deptname}'";
+
+            // string query = "SELECT * FROM Employee ";
+
+
+            using (SqlConnection con = new SqlConnection(constring))
+            {
+                con.Open();
+                SqlCommand cmd = con.CreateCommand();
+                cmd.CommandText = query;
+                cmd.CommandType = System.Data.CommandType.Text;
+                SqlDataReader rdr = cmd.ExecuteReader();
+                while (rdr.Read())
+                {
+                    int id = Convert.ToInt32(rdr["ID"]);
+                }
                 
-
-                using (SqlConnection con = new SqlConnection(constring))
-                {
-                    con.Open();
-
-                    SqlCommand cmd = con.CreateCommand();
-                    cmd.CommandText = query;
-                    cmd.CommandType = System.Data.CommandType.Text;
-
-                    cmd.Parameters.AddWithValue("@Name", team.Name);
-
-                    //cmd.Parameters.AddWithValue("@DeptID", team.DeptID);
-
-                    cmd.ExecuteNonQuery();
-
-                    //using (SqlDataReader reader = cmd.ExecuteReader())
-                    //{
-                    //    while (reader.Read())
-                    //    {
-                    //        Model temp = new Model();
-                    //        temp.Name = reader["Name"].ToString();
-                    //        temp.Age = (int)reader["Age"];
-
-                    //        ldata.Add(temp);
-                    //    }
-                    //}
-                }
             }
-            catch (Exception ex)
+            
+            //
+
+            string query2 = $"insert into Team (Name, Leader, DeptID) values ('{team.Name}','{team.TeamLead}','')";
+
+
+            using (SqlConnection con = new SqlConnection(constring))
             {
-            }
+                con.Open();
+                SqlCommand cmd = con.CreateCommand();
+                cmd.CommandType = System.Data.CommandType.Text;
+                cmd.ExecuteNonQuery();
 
+            }
         }
-
-        public void AddDeptTable(Dept dept)
+        public void Dept(Department dept)
         {
-            try
+
+            string constring = ConfigurationManager.ConnectionStrings["Test"].ConnectionString;
+            string query = $"insert into Department (Name, Head) values ('{dept.Name}','{dept.DeptHead})";
+            //insert
+            using (SqlConnection con = new SqlConnection(constring))
             {
-                string constring = ConfigurationManager.ConnectionStrings["Test"].ConnectionString;
-                string query = $"insert into Department (Name) values (@Name)";
+                con.Open();
+                SqlCommand cmd = con.CreateCommand();
+                cmd.CommandText = query;
+                cmd.CommandType = System.Data.CommandType.Text;
+                cmd.ExecuteNonQuery();
 
-                using (SqlConnection con = new SqlConnection(constring))
-                {
-                    con.Open();
-
-                    SqlCommand cmd = con.CreateCommand();
-                    cmd.CommandText = query;
-                    cmd.CommandType = System.Data.CommandType.Text;
-
-                    cmd.Parameters.AddWithValue("@Name", dept.Name);
-
-                  
-
-                    cmd.ExecuteNonQuery();
-
-                    //using (SqlDataReader reader = cmd.ExecuteReader())
-                    //{
-                    //    while (reader.Read())
-                    //    {
-                    //        Model temp = new Model();
-                    //        temp.Name = reader["Name"].ToString();
-                    //        temp.Age = (int)reader["Age"];
-
-                    //        ldata.Add(temp);
-                    //    }
-                    //}
-                }
             }
-            catch (Exception ex)
-            {
-            }
-
-        }
-
-        public void ReadPersonTable(Person person)
-        {
-            try
-            {
-                string constring = ConfigurationManager.ConnectionStrings["Test"].ConnectionString;
-                string query = "select ID, Name, Age from Person ";
-
-                using (SqlConnection con = new SqlConnection(constring))
-                {
-                    con.Open();
-
-                    SqlCommand cmd = con.CreateCommand();
-                    cmd.CommandText = query;
-                    cmd.CommandType = System.Data.CommandType.Text;
-
-                    using (SqlDataReader reader = cmd.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            Person temp = new Person();
-                            temp.Name = reader["Name"].ToString();
-                         
-                        }
-                    }
-
-                    cmd.ExecuteNonQuery();
-
-                    //
-                }
-            }
-            catch (Exception ex)
-            {
-            }
-
+            //--------------
         }
     }
-        
 }

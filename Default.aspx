@@ -1,116 +1,94 @@
-﻿<%@ Page Title="Home Page" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="Default.aspx.cs" Inherits="CRUD._Default" %>
+﻿<%@ Page Title="Home Page" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="Default.aspx.cs" Inherits="PatExam._Default" %>
 
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
 
     <main>
-      
+
+     
+         <div class="bg-primary text-white"> I love HTML </div>
+    <div class="bg-danger text-white"> I love CSS </div>
+    <div class="bg-warning text-dark"> I love JavaScript </div>
+
+
+
+	
 
         <div class="row">
-            
-              <%--  <asp:UpdatePanel runat="server" ID="UpdatePanel1"  UpdateMode="Conditional" ChildrenAsTriggers="true" >
-                 <ContentTemplate>
-                     <asp:GridView ID="GridView1" runat="server" AutoGenerateColumns="False" AllowPaging="true"  PageSize="10">
-                         <Columns>
-                         <asp:BoundField DataField="Id" HeaderText="Id" />
-                         <asp:BoundField DataField="Name" HeaderText="Name" />
-                             <asp:TemplateField>
-                                <ItemTemplate>
-                                    <!-- Edit Button -->
-                                    <asp:Button ID="EditButton" runat="server" 
-                                                Text="Edit" 
-                                                CommandName="Edit"
-                                                OnClick="EditButton_Click" />
-                                    <!-- Delete Button -->
-                                    <asp:Button ID="DeleteButton" runat="server" 
-                                                Text="Delete" 
-                                                CommandName="Delete"
-                                                OnClick="DeleteButton_Click" />
-                                </ItemTemplate>
-                            </asp:TemplateField>
-                        </Columns>
-                    </asp:GridView>
-                 </ContentTemplate>
-                </asp:UpdatePanel>--%>
-             <%--<asp:Button ID="ReaderButton" Text="Read" runat="server" OnClick="btnReader" />--%>
-            
-   <asp:UpdatePanel ID="UpdatePanel2" runat="server" UpdateMode="Conditional" ChildrenAsTriggers="true">
-    <ContentTemplate>
-        <div id="appear" runat="server" visible="false" style="margin: 20px; padding: 10px; border: 1px solid #ccc; width: 300px;">
-            <asp:TextBox ID="TextBox1" runat="server" placeholder="Enter Name" style="display: block; margin-bottom: 10px;" />
-            <asp:TextBox ID="TextBox2" runat="server" placeholder="Enter Age" style="display: block; margin-bottom: 10px;" />
-            <asp:TextBox ID="TextBox3" runat="server" placeholder="Enter Address" style="display: block; margin-bottom: 10px;" />
-            <asp:TextBox ID="TextBox4" runat="server" placeholder="Enter Email" style="display: block; margin-bottom: 10px;" />
-            <asp:Button ID="Button1" Text="Save" runat="server" OnClick="ButtonOne" style="display: block;" />
-        </div>
-    </ContentTemplate>
-</asp:UpdatePanel>
-
-
-            <asp:UpdatePanel runat="server" ID="UpdatePanel1"  UpdateMode="Conditional" ChildrenAsTriggers="true" >
-                 <ContentTemplate>
-                      <asp:GridView ID="GridView1" runat="server" AutoGenerateColumns="False" DataKeyNames="ID" 
-                      OnRowEditing="GridView1_RowEditing"
-                      OnRowUpdating="GridView1_RowUpdating"
-                      OnRowCancelingEdit="GridView1_RowCancelingEdit"
-                      OnRowDeleting="GridView1_RowDeleting"
-                                
-                                AllowPaging="true"
-                                PageSize="2"
-                                OnPageIndexChanging="GridView1_PageIndexChanging">
-                                
-            <Columns>
-                <asp:BoundField DataField="ID" HeaderText="ID" ReadOnly="True" />
-               
-                <asp:TemplateField HeaderText="Name">
-                    <ItemTemplate>
+            <%--Department--%>
+            <asp:UpdatePanel runat="server" ID="UpdatePanel2"  UpdateMode="Conditional" ChildrenAsTriggers="true" >
+                <ContentTemplate>
+                    <br>
+                    <asp:Label ID="Label2" Text="DepartmentName" runat="server" />
+                    <asp:TextBox runat="server" ID="txtDeptName" />
+                     
+                    <asp:Label ID="Labell" Text="DepartmentHead" runat="server" />
+                    <asp:TextBox runat="server" ID="txtDeptHead" />
                     
-                        <asp:Label ID="LabelName" runat="server" Text='<%# Eval("Name") %>' />
-                    </ItemTemplate>
-                    <EditItemTemplate>
-                      
-                        <asp:TextBox ID="TextBoxName" runat="server" Text='<%# Eval("Name") %>' />
-                    </EditItemTemplate>
-                </asp:TemplateField>
+                    <asp:Button ID="Buttono" Text="Add Dept" runat="server" OnClick="btnAddDept_Click" />
+                </ContentTemplate>
+            </asp:UpdatePanel>
 
-               
-                <asp:TemplateField HeaderText="Age">
-                    <ItemTemplate>
-                        <asp:Label ID="LabelAge" runat="server" Text='<%# Eval("Age") %>' />
-                    </ItemTemplate>
-                    <EditItemTemplate>
-                        <asp:TextBox ID="TextBoxAge" runat="server" Text='<%# Eval("Age") %>' />
-                    </EditItemTemplate>
-                </asp:TemplateField>
+             <%--Team--%>
+            <asp:UpdatePanel runat="server" ID="updTeam" UpdateMode="Conditional" ChildrenAsTriggers="true">
+                <ContentTemplate>
+                    <asp:DropDownList runat="server" ID="ddlDept" OnSelectedIndexChanged="ddlTeamFilter_SelectedIndexChanged"></asp:DropDownList>
+                    <asp:Label ID="lblTeamName" Text="TeamName" runat="server" />
+                    <asp:TextBox runat="server" ID="txtTeamName" />
+                    <asp:Label ID="lblTeamLead" Text="Name of Team Lead" runat="server" />
+                    <asp:TextBox runat="server" ID="txtTeamLead" />
+                    <asp:Label ID="lblDeptName" Text="Department Name" runat="server" />
+                    <asp:TextBox runat="server" ID="txtDeptNameTeam" />
+                    <asp:Button ID="btnAddTeam" Text="Add Team" runat="server" OnClick="btnAddTeam_Click" />
+                </ContentTemplate>
+            </asp:UpdatePanel>
 
-    
-                <asp:TemplateField HeaderText="Address">
-                    <ItemTemplate>
-                        <asp:Label ID="LabelAddress" runat="server" Text='<%# Eval("Address") %>' />
-                    </ItemTemplate>
-                    <EditItemTemplate>
-                        <asp:TextBox ID="TextBoxAddress" runat="server" Text='<%# Eval("Address") %>' />
-                    </EditItemTemplate>
-                </asp:TemplateField>
+             <%--Employee--%>
+            <asp:UpdatePanel runat="server" ID="UpdatePanel1"  UpdateMode="Conditional" ChildrenAsTriggers="true" >
+                <ContentTemplate>
+                   <br>
+                     <asp:DropDownList runat="server" ID="ddlTeam" OnSelectedIndexChanged="ddlTeamFilter_SelectedIndexChanged2"></asp:DropDownList>
+                    <asp:Label ID="Label4" Text="Employee Name" runat="server" />
+                    <asp:TextBox runat="server" ID="txtName" />
+                    <asp:Button ID="Button1" Text="Add Member" runat="server" OnClick="btnAddMember_Click" />
+                </ContentTemplate>
+            </asp:UpdatePanel>
+            <asp:UpdatePanel runat="server" ID="UpdatePanel3"  UpdateMode="Conditional" ChildrenAsTriggers="true" >
+                <ContentTemplate>
+                   
+                </ContentTemplate>
+            </asp:UpdatePanel>
 
-    
-                <asp:TemplateField HeaderText="Email">
-                    <ItemTemplate>
-                        <asp:Label ID="LabelEmail" runat="server" Text='<%# Eval("Email") %>' />
-                    </ItemTemplate>
-                    <EditItemTemplate>
-                        <asp:TextBox ID="TextBoxEmail" runat="server" Text='<%# Eval("Email") %>' />
-                    </EditItemTemplate>
-                </asp:TemplateField>
+          <%--  grid--%>
+            <asp:UpdatePanel runat="server" ID="UpdatePanel4"  UpdateMode="Conditional" ChildrenAsTriggers="true" AutoPostBack="true" >
+                <ContentTemplate>
+      
+                    <asp:GridView ID="GridView1" runat="server" AutoGenerateColumns="True" 
+                CellPadding="4" ForeColor="#333333" GridLines="None">
+                <Columns>
+                    <asp:BoundField DataField="ID" HeaderText="ID"  />
+                    <asp:BoundField DataField="Name" HeaderText="Name"  />
+     
+                </Columns>
+            </asp:GridView>
+       
+                </ContentTemplate>
+            </asp:UpdatePanel>
 
-
-                <asp:CommandField ShowEditButton="True" ShowDeleteButton="True" />
-            </Columns>
-        </asp:GridView>
-                     <asp:Button runat="server" ID="btnExport" Text="Export to Text File" OnClick="ExportData_Click" />
-                     <asp:Button runat="server" ID="Button2" Text="add" OnClick="add_Click" />
-             </ContentTemplate>
-</asp:UpdatePanel>
-           
+            <%--grid--%>
+            <asp:UpdatePanel runat="server" ID="UpdatePanel6"  UpdateMode="Conditional" ChildrenAsTriggers="true" AutoPostBack="true">
+                <ContentTemplate>
+      
+                <asp:GridView ID="GridView2" runat="server" AutoGenerateColumns="True" 
+                CellPadding="4" ForeColor="#333333" GridLines="None">
+                <Columns>
+                    <asp:BoundField DataField="ID" HeaderText="ID"  />
+                    <asp:BoundField DataField="Name" HeaderText="Name"  />
+        
+                </Columns>
+            </asp:GridView>
+       
+                </ContentTemplate>
+            </asp:UpdatePanel>
         </div>
     </main>
 
