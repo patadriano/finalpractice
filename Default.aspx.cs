@@ -1,249 +1,231 @@
-﻿using Microsoft.Ajax.Utilities;
-using PatExam.Controllers;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.ComponentModel;
+using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Text.RegularExpressions;
+using System.Text;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using static System.Net.Mime.MediaTypeNames;
 
-namespace PatExam
+using SimpleCRUD.Controllers;
+
+namespace SimpleCRUD
 {
-	public partial class _Default : Page
-	{
-		
-		protected void Page_Load(object sender, EventArgs e)
-		{
-			if (!IsPostBack)
-			{
-                //if (Cache["Team"] == null)
-                //{
-
-                //	Cache["Team"] = new List<Team>();
-                //}
-                
-                updateddl();
-
-                
-			}
-		}
-
-		private void updateddl()
+    public partial class _Default : Page
+    {
+        StringBuilder table = new StringBuilder();
+        protected void Page_Load(object sender, EventArgs e)
         {
-
-            List<Team> ddlTeamList = new List<Team>();
-            String constring = ConfigurationManager.ConnectionStrings["Test"].ConnectionString; ;
-            string query = "select * from Team";
-            using (SqlConnection con = new SqlConnection(constring))
+            if (!IsPostBack)
             {
-                con.Open();
-                using (SqlCommand cmd = new SqlCommand(query, con))
+                try
                 {
-                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    List<Dept> ddlDeptlist = new List<Dept>();
+                    List<Team> ddlTeamlist = new List<Team>();
+                    List<Person> ddlPersonlist = new List<Person>();
+
+                    string constring = ConfigurationManager.ConnectionStrings["Test"].ConnectionString;
+                    string dept_query = "Select ID, Name from Department ";
+                    string team_query = "Select ID, Name from Team ";
+                    string person_query = "Select ID, Name from Person ";
+
+                    using (SqlConnection con = new SqlConnection(constring))
                     {
-                        while (reader.Read())
+                        con.Open();
+                        SqlCommand cmd = con.CreateCommand();
+                        cmd.CommandText = dept_query;
+                        cmd.CommandType = System.Data.CommandType.Text;
+
+                        using (SqlDataReader reader = cmd.ExecuteReader())
                         {
-                            Team temp = new Team();
-
-                            temp.Name = reader["Name"].ToString();
-                            ddlTeamList.Add(temp);
+                            while (reader.Read())
+                            {
+                                Dept temp = new Dept();
+                                temp.ID = Convert.ToInt32(reader["ID"]);
+                                temp.Name = reader["Name"].ToString();
+                                ddlDeptlist.Add(temp);
+                            }
                         }
+
+                        cmd.CommandText = team_query;
+                        cmd.CommandType = System.Data.CommandType.Text;
+
+                        using (SqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                Team temp = new Team();
+                                temp.ID = Convert.ToInt32(reader["ID"]);
+                                temp.Name = reader["Name"].ToString();
+                                ddlTeamlist.Add(temp);
+                            }
+                        }
+
+                        cmd.CommandText = person_query;
+                        cmd.CommandType = System.Data.CommandType.Text;
+
+                        using (SqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                Person temp = new Person();
+                                temp.ID = Convert.ToInt32(reader["ID"]);
+                                temp.Name = reader["Name"].ToString();
+                                ddlPersonlist.Add(temp);
+                            }
+                        }
+
+                        cmd.ExecuteNonQuery();
+
+                        //
                     }
+
+                ddlDept.DataSource = ddlDeptlist;
+                    //ddl.DataTextField = "Name";
+                    //ddl.DataValueField = "Name";
+                    // only use this pag may model gawin mong models or object list yung list
+                ddlDept.DataBind();
+                ddlTeam.DataSource = ddlTeamlist;
+                ddlTeam.DataBind();
+             
                 }
-            }
-            ddlTeam.DataSource = ddlTeamList;
-            ddlTeam.DataTextField = "Name";
-            ddlTeam.DataValueField = "Name";
-            ddlTeam.DataBind();
-
-            List<Department> ddlDeptList = new List<Department>();
-
-            string query2 = "select * from Department";
-            using (SqlConnection con = new SqlConnection(constring))
-            {
-                con.Open();
-                using (SqlCommand cmd = new SqlCommand(query2, con))
+                catch (Exception ex)
                 {
-                    using (SqlDataReader reader = cmd.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            Department temp2 = new Department();
-
-                            temp2.Name = reader["Name"].ToString();
-                            ddlDeptList.Add(temp2);
-                        }
-                    }
                 }
-            }
 
-            ddlDept.DataSource = ddlDeptList;
-            ddlDept.DataTextField = "Name";
-            ddlDept.DataValueField = "Name";
-            ddlDept.DataBind();
+                
+            }
         }
-
-        protected void btnAddDept_Click(object sender, EventArgs e)
-		{
-            Employee deptHead = new Employee();
-            deptHead.Name = txtDeptHead.Text; 
-
-            Department dept = new Department();
+        protected void btnDept_Click(object sender, EventArgs e)
+        {
+            Dept dept = new Dept();
             dept.Name = txtDeptName.Text;
-            dept.DeptHead = deptHead;  
 
 
+            DefaultController defaultController = new DefaultController();
+            defaultController.AddDeptTable(dept);  
 
-            string constring = ConfigurationManager.ConnectionStrings["Test"].ConnectionString;
-            string query = $"insert into Department (Name) values ('{dept.Name}')";
-            //insert
-            using (SqlConnection con = new SqlConnection(constring))
-            {
-                con.Open();
-                SqlCommand cmd = con.CreateCommand();
-                cmd.CommandText = query;
-                cmd.CommandType = System.Data.CommandType.Text;
-                cmd.ExecuteNonQuery();
-
-            }
-            updateddl();
-            updTeam.Update();
         }
 
-        protected void btnAddTeam_Click(object sender, EventArgs e)
+        protected void btnTeam_Click(object sender, EventArgs e)
         {
-            int selectedIndex = ddlDept.SelectedIndex;
-            bindgrid(selectedIndex);
-            UpdatePanel4.Update();
-
             Team team = new Team();
-			Employee teamLead = new Employee();
-			
-			team.Name = txtTeamName.Text;
-
-   //         teamLead.Name = txtTeamLead.Text;
-
-			//string deptname = txtDeptNameTeam.Text;
-
-   //         team.TeamLead = teamLead;
-
-            string constring = ConfigurationManager.ConnectionStrings["Test"].ConnectionString;
-            string query = $"insert into Team (Name, DeptID) values ('{team.Name}', {selectedIndex+1})";
-            //insert
-            using (SqlConnection con = new SqlConnection(constring))
-            {
-                con.Open();
-                SqlCommand cmd = con.CreateCommand();
-                cmd.CommandText = query;
-                cmd.CommandType = System.Data.CommandType.Text;
-                cmd.ExecuteNonQuery();
-
-            }
-            updateddl();
-            UpdatePanel1.Update();
+            team.Name = txtTeamName.Text;
 
 
-            // ((List<Team>)Cache["Team"]).Add(team);
-
+            DefaultController defaultController = new DefaultController();
+            defaultController.AddTeamTable(team);
 
         }
-			
-			
-        protected void btnAddMember_Click(object sender, EventArgs e)
-		{
-            int selectedIndex = ddlTeam.SelectedIndex;
-            bindgrid2(selectedIndex);
-            UpdatePanel6.Update();
-
-            //TextBox3.Text
-            Employee emp = new Employee();
-			emp.Name = txtName.Text;
-
-            string constring = ConfigurationManager.ConnectionStrings["Test"].ConnectionString;
-            string query = $"insert into Employee (Name, TeamID) values ('{emp.Name}', {selectedIndex + 1})";
-            //insert
-            using (SqlConnection con = new SqlConnection(constring))
-            {
-                con.Open();
-                SqlCommand cmd = con.CreateCommand();
-                cmd.CommandText = query;
-                cmd.CommandType = System.Data.CommandType.Text;
-                cmd.ExecuteNonQuery();
-
-            }
-        }
-        protected void ddlTeamFilter_SelectedIndexChanged(object sender, EventArgs e)
+        protected void btnPerson_Click(object sender, EventArgs e)
         {
-            // Get the selected team ID from DropDownList
-            int selectedTeamId = ddlDept.SelectedIndex;
-
-            // Bind the GridView with the selected team data
-            bindgrid(selectedTeamId);
-            UpdatePanel4.Update();
-
-        }
-        protected void ddlTeamFilter_SelectedIndexChanged2(object sender, EventArgs e)
-        {
+            Person person = new Person();
+            person.Name = txtPersonName.Text;
             
-             int selectedTeamId = ddlTeam.SelectedIndex;
 
-          
-            bindgrid2(selectedTeamId);
-            UpdatePanel6.Update();
+            DefaultController defaultController = new DefaultController();
+            defaultController.AddPersonTable(person);    
         }
-
-        private void bindgrid(int selectedIndex)
+        
+        public void display()
         {
+            //string constring = ConfigurationManager.ConnectionStrings["Test"].ConnectionString;
+            //SqlConnection con = new SqlConnection(constring);
+            //con.ConnectionString = ConfigurationManager.ConnectionStrings["Test"].ToString();
+            //con.Open();
+            //SqlCommand cmd = new SqlCommand();
+            //cmd.CommandText = "select * from Person";
+            //cmd.Connection = con;
+            //SqlDataReader rd = cmd.ExecuteReader();
+            //table.Append("<table border='1'>");
+            //table.Append("<tr><th>Name</th><th>Age</th>");
+            //table.Append("</tr>");
 
-            List<Team> ddlTeamList = new List<Team>();
-            String constring = ConfigurationManager.ConnectionStrings["Test"].ConnectionString;
-            string query = $"select * from Team where DeptID = {selectedIndex + 1}";
-            using (SqlConnection con = new SqlConnection(constring))
+            //if (rd.HasRows)
+            //{
+            //    while (rd.Read())
+            //    {
+            //        table.Append("<tr>");
+            //        table.Append("<td>" + rd[0] + "<td>");
+            //        table.Append("<td>" + rd[1] + "<td>");
+            //        table.Append("<tr>");
+            //    }
+            //}
+            //table.Append("</table>");
+            //PlaceHolder1.Controls.Add(new Literal { Text = table.ToString() });
+            //rd.Close();
+        }
+        protected void OnPageIndexChanging(object sender, GridViewPageEventArgs e)
+        {
+            GridView1.PageIndex = e.NewPageIndex;
+            this.BindGrid();
+        }
+        private void BindGrid()
+        {
+            string constr = ConfigurationManager.ConnectionStrings["Test"].ConnectionString;
+            using (SqlConnection con = new SqlConnection(constr))
             {
-                con.Open();
-                using (SqlCommand cmd = new SqlCommand(query, con))
+                using (SqlCommand cmd = new SqlCommand("SELECT Name, Age FROM Person"))
                 {
-                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    using (SqlDataAdapter sda = new SqlDataAdapter())
                     {
-                        if (reader.HasRows)
+                        cmd.Connection = con;
+                        sda.SelectCommand = cmd;
+                        using (DataTable dt = new DataTable())
                         {
-                            // Bind the SqlDataReader to the GridView
-                            GridView1.DataSource = reader;
+                            sda.Fill(dt);
+                            GridView1.DataSource = dt;
                             GridView1.DataBind();
                         }
                     }
                 }
             }
-
         }
-        private void bindgrid2(int selectedIndex) { 
-            List<Department> ddlDeptList = new List<Department>();
-            String constring = ConfigurationManager.ConnectionStrings["Test"].ConnectionString; ;
-            string query2 = $"select * from Employee where TeamID = {selectedIndex + 1}"; ;
-            using (SqlConnection con = new SqlConnection(constring))
+        protected void btnReader(object sender, EventArgs e)
+        {
+            try
             {
-                con.Open();
-                using (SqlCommand cmd = new SqlCommand(query2, con))
+                string constring = ConfigurationManager.ConnectionStrings["Test"].ConnectionString;
+                string query = "select ID, Name, Age from Person ";
+                List<string> list = new List<string>();
+                using (SqlConnection con = new SqlConnection(constring))
                 {
+                    con.Open();
+
+                    SqlCommand cmd = con.CreateCommand();
+                    cmd.CommandText = query;
+                    cmd.CommandType = System.Data.CommandType.Text;
+
                     using (SqlDataReader reader = cmd.ExecuteReader())
                     {
-                        if (reader.HasRows)
+                        while (reader.Read())
                         {
-                            // Bind the SqlDataReader to the GridView
-                            GridView2.DataSource = reader;
-                            GridView2.DataBind();
+                            Person temp = new Person();
+                            
+                            temp.Name = reader["Name"].ToString();
+                      
+
+                            list.Add(temp.Name);
+                            
                         }
                     }
+
+                 
+
+
+                    cmd.ExecuteNonQuery();
+
+                    //
                 }
             }
-
-        
-
+            catch (Exception ex)
+            {
+               
+            }
         }
 
-	}
+    }
 }
